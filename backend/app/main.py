@@ -12,6 +12,7 @@ from app.schemas.utilisateur_schema import LoginRequest, UtilisateurCreate
 from app.models.utilisateur import Utilisateur
 from app.core.securite import verifier_mot_de_passe, creer_token
 from app.core.securite import hash_mot_de_passe, verifier_mot_de_passe, creer_token
+from app.core.securite import hash_mot_de_passe, verifier_mot_de_passe, creer_token, get_current_user
 
 
 app = FastAPI()
@@ -25,13 +26,13 @@ def lister_enfants(db: Session = Depends(get_db)):
     return db.query(Enfant).all()
 
 @app.post("/enfants")
-def creer_enfant(enfant_data: EnfantCreate, db: Session = Depends(get_db)):
+def creer_enfant(enfant_data: EnfantCreate, db: Session = Depends(get_db), utilisateur_connecte: Utilisateur = Depends(get_current_user)):
     nouvel_enfant = Enfant(**enfant_data.model_dump())
     db.add(nouvel_enfant)
     db.commit()
     db.refresh(nouvel_enfant)
     return nouvel_enfant
-
+	
 @app.get("/bulletins")
 def lister_bulletins(db: Session = Depends(get_db)):
     return db.query(Bulletin).all()
