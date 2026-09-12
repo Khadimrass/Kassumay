@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Login from './Login'
 import FormulaireEnfant from './FormulaireEnfant'
+import FormulairePaiement from './FormulairePaiement'
 
 function App() {
   const [enfants, setEnfants] = useState([])
@@ -30,6 +31,10 @@ function App() {
     setEnfants([...enfants, nouvelEnfant])
   }
 
+  function handleNouveauPaiement(nouveauPaiement) {
+    setPaiements([...paiements, nouveauPaiement])
+  }
+
   return (
     <div>
       <Login />
@@ -43,25 +48,26 @@ function App() {
           </li>
         ))}
       </ul>
-    {enfantSelectionne && (
-  <div>
-    <h2>Détails de {enfantSelectionne.nom}</h2>
+      {enfantSelectionne && (
+        <div>
+          <h2>Détails de {enfantSelectionne.nom}</h2>
 
-    <h3>Bulletins</h3>
-    <ul>
-      {bulletins.filter(b => b.enfant_id === enfantSelectionne.id).map(b => (
-        <li key={b.id}>{b.annee_scolaire} - {b.classe}</li>
-      ))}
-    </ul>
+          <h3>Bulletins</h3>
+          <ul>
+            {bulletins.filter(b => b.enfant_id === enfantSelectionne.id).map(b => (
+              <li key={b.id}>{b.annee_scolaire} - {b.classe}</li>
+            ))}
+          </ul>
 
-    <h3>Paiements</h3>
-    <ul>
-      {paiements.filter(p => p.enfant_id === enfantSelectionne.id).map(p => (
-        <li key={p.id}>{p.annee_scolaire} - {p.tranche} - {p.montant} FCFA</li>
-      ))}
-    </ul>
-  </div>
-)}
+          <h3>Paiements</h3>
+          <FormulairePaiement enfantId={enfantSelectionne.id} onPaiementCree={handleNouveauPaiement} />
+          <ul>
+            {paiements.filter(p => p.enfant_id === enfantSelectionne.id).map(p => (
+              <li key={p.id}>{p.annee_scolaire} - {p.tranche} - {p.montant} FCFA</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }
