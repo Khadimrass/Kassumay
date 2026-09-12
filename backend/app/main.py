@@ -102,3 +102,16 @@ def register(data: UtilisateurCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(nouvel_utilisateur)
     return nouvel_utilisateur
+	
+@app.delete("/bulletins/{bulletin_id}")
+def supprimer_bulletin(bulletin_id: int, db: Session = Depends(get_db)):
+    bulletin = db.query(Bulletin).filter(Bulletin.id == bulletin_id).first()
+    if not bulletin:
+        raise HTTPException(status_code=404, detail="Bulletin introuvable")
+    db.delete(bulletin)
+    db.commit()
+	
+@app.delete("/bulletins")
+def supprimer_tous_bulletins(db: Session = Depends(get_db)):
+    db.query(Bulletin).delete()
+    db.commit()
