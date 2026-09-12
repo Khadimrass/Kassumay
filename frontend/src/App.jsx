@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Login from './Login'
 import FormulaireEnfant from './FormulaireEnfant'
 import FormulairePaiement from './FormulairePaiement'
+import FormulaireBulletin from './FormulaireBulletin'
 
 function App() {
   const [enfants, setEnfants] = useState([])
@@ -35,6 +36,10 @@ function App() {
     setPaiements([...paiements, nouveauPaiement])
   }
 
+  function handleNouveauBulletin(nouveauBulletin) {
+    setBulletins([...bulletins, nouveauBulletin])
+  }
+
   return (
     <div>
       <Login />
@@ -53,6 +58,7 @@ function App() {
           <h2>Détails de {enfantSelectionne.nom}</h2>
 
           <h3>Bulletins</h3>
+          <FormulaireBulletin enfantId={enfantSelectionne.id} onBulletinCree={handleNouveauBulletin} />
           <ul>
             {bulletins.filter(b => b.enfant_id === enfantSelectionne.id).map(b => (
               <li key={b.id}>{b.annee_scolaire} - {b.classe}</li>
