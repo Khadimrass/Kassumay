@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 import shutil
 import os
+from fastapi.staticfiles import StaticFiles
 
 from app.core.database import get_db
 from app.models.enfant import Enfant
@@ -25,7 +26,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 os.makedirs("uploads", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.post("/upload")
 def upload_fichier(fichier: UploadFile = File(...)):

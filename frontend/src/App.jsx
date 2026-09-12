@@ -61,7 +61,10 @@ function App() {
           <FormulaireBulletin enfantId={enfantSelectionne.id} onBulletinCree={handleNouveauBulletin} />
           <ul>
             {bulletins.filter(b => b.enfant_id === enfantSelectionne.id).map(b => (
-              <li key={b.id}>{b.annee_scolaire} - {b.classe}</li>
+              <li key={b.id}>
+  {b.annee_scolaire} - {b.classe}
+  <img src={"http://127.0.0.1:8000/" + b.fichier_bulletin_url} width="100" />
+</li>
             ))}
           </ul>
 
