@@ -1,3 +1,4 @@
+from datetime import date
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,7 +13,7 @@ from app.models.paiement import Paiement
 from app.models.utilisateur import Utilisateur
 from app.schemas.enfant_schema import EnfantCreate, EnfantUpdate
 from app.schemas.bulletin_schema import BulletinCreate
-from app.schemas.paiement_schema import PaiementCreate
+from app.schemas.paiement_schema import PaiementCreate, PaiementUpdate
 from app.schemas.utilisateur_schema import LoginRequest, UtilisateurCreate
 from app.core.securite import hash_mot_de_passe, verifier_mot_de_passe, creer_token, get_current_user
 
@@ -99,6 +100,42 @@ def creer_paiement(enfant_data: PaiementCreate, db: Session = Depends(get_db),
     db.commit()
     db.refresh(nouveau_paiement)
     return nouveau_paiement
+
+@app.put("/paiements/{paiement_id}/payer")
+def marquer_paiement_paye(paiement_id: int, db: Session = Depends(get_db),
+                          utilisateur_connecte: Utilisateur = Depends(get_current_user)):
+    paiement = db.query(Paiement).filter(Paiement.id == paiement_id).first()
+    if paiement is None:
+        raise HTTPException(status_code=404, detail="Paiement introuvable")
+    paiement.statut = "paye"
+    paiement.date_paiement = date.today()
+    db.commit()
+    db.refresh(paiement)
+    return paiement
+
+@app.put("/paiements/{paiement_id}")
+def modifier_paiement(paiement_id: int, donnees: PaiementUpdate, db: Session = Depends(get_db),
+                      utilisateur_connecte: Utilisateur = Depends(get_current_user)):
+    paiement = db.query(Paiement).filter(Paiement.id == paiement_id).first()
+    if paiement is None:
+        raise HTTPException(status_code=404, detail="Paiement introuvable")
+    for champ, valeur in donnees.model_dump(exclude_unset=True).items():
+        setattr(paiement, champ, valeur)
+    if paiement.statut == "paye" and paiement.date_paiement is None:
+        paiement.date_paiement = date.today()
+    db.commit()
+    db.refresh(paiement)
+    return paiement
+
+@app.delete("/paiements/{paiement_id}")
+def supprimer_paiement(paiement_id: int, db: Session = Depends(get_db),
+                       utilisateur_connecte: Utilisateur = Depends(get_current_user)):
+    paiement = db.query(Paiement).filter(Paiement.id == paiement_id).first()
+    if paiement is None:
+        raise HTTPException(status_code=404, detail="Paiement introuvable")
+    db.delete(paiement)
+    db.commit()
+    return {"message": "supprimé"}
 
 @app.post("/login")
 def login(login_data: LoginRequest, db: Session = Depends(get_db)):

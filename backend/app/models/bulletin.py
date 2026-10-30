@@ -12,4 +12,4 @@ class Bulletin(Base):
     fichier_bulletin_url = Column(String, nullable=True)
     commentaire = Column(String, nullable=True)
 
-    enfant = relationship("Enfant")
+    enfant = relationship("Enfant", back_populates="bulletins")

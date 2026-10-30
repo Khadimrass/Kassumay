@@ -13,5 +13,5 @@ class Enfant(Base):
     date_naissance = Column(Date, nullable=True)
     classe = Column(String, nullable=True)
 
-    bulletins = relationship("Bulletin", cascade="all, delete-orphan")
-    paiements = relationship("Paiement", cascade="all, delete-orphan")
+    bulletins = relationship("Bulletin", back_populates="enfant", cascade="all, delete-orphan")
+    paiements = relationship("Paiement", back_populates="enfant", cascade="all, delete-orphan")

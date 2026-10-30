@@ -11,5 +11,6 @@ class Paiement(Base):
     tranche = Column(String, nullable=False)
     montant = Column(Float, nullable=False)
     date_paiement = Column(Date, nullable=True)
+    statut = Column(String, nullable=False, default="paye", server_default="paye")  # "paye" ou "a_payer"
 
-    enfant = relationship("Enfant")
+    enfant = relationship("Enfant", back_populates="paiements")

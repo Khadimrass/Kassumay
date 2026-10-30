@@ -5,6 +5,7 @@ import FormulaireModifierEnfant from './FormulaireModifierEnfant'
 import FormulairePaiement from './FormulairePaiement'
 import FormulaireBulletin from './FormulaireBulletin'
 import ImageProtegee from './ImageProtegee'
+import LignePaiement from './LignePaiement'
 import { apiFetch, estConnecte } from './api'
 
 function calculerAge(dateNaissance) {
@@ -51,7 +52,11 @@ function PageDetailEnfant() {
   if (!enfant) return <div className="page"><PageHeader titre="Enfant" /><p className="contenu">Chargement…</p></div>
 
   const age = calculerAge(enfant.date_naissance)
-  const total = paiements.reduce((s, p) => s + (p.montant || 0), 0)
+  const verses = paiements.filter(p => p.statut !== 'a_payer')
+  const aPayer = paiements.filter(p => p.statut === 'a_payer')
+  const total = verses.reduce((s, p) => s + (p.montant || 0), 0)
+  const reste = aPayer.reduce((s, p) => s + (p.montant || 0), 0)
+  const fmt = n => Number(n).toLocaleString('fr-FR')
 
   return (
     <div className="page">
@@ -94,14 +99,27 @@ function PageDetailEnfant() {
 
         <div className="details-enfant">
           <h3>Paiements</h3>
+          <div className="resume-paiements">
+            <div className="resume-case"><span>Versé</span><strong>{fmt(total)} FCFA</strong></div>
+            <div className="resume-case reste"><span>Reste à payer</span><strong>{fmt(reste)} FCFA</strong></div>
+            <div className="resume-case"><span>Total prévu</span><strong>{fmt(total + reste)} FCFA</strong></div>
+          </div>
+          <h4 className="sous-titre">Déjà versé</h4>
           <ul className="liste-items">
-            {paiements.map(p => (
-              <li key={p.id} className="item-carte">
-                {p.annee_scolaire} · {p.tranche} · {Number(p.montant).toLocaleString('fr-FR')} FCFA
-              </li>
+            {verses.map(p => (
+              <LignePaiement key={p.id} paiement={p} onChange={charger} />
             ))}
           </ul>
-          <p className="total-paiements">Total versé : {total.toLocaleString('fr-FR')} FCFA</p>
+          {aPayer.length > 0 && (
+            <>
+              <h4 className="sous-titre">Reste à payer</h4>
+              <ul className="liste-items">
+                {aPayer.map(p => (
+                  <LignePaiement key={p.id} paiement={p} onChange={charger} />
+                ))}
+              </ul>
+            </>
+          )}
           <FormulairePaiement enfantId={enfant.id} onPaiementCree={charger} />
         </div>
       </div>
