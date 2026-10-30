@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { API } from './api'
 
 function FormulairePaiement({ onPaiementCree, enfantId }) {
   const [anneeScolaire, setAnneeScolaire] = useState('')
@@ -8,7 +9,7 @@ function FormulairePaiement({ onPaiementCree, enfantId }) {
   function handleSubmit() {
     const token = localStorage.getItem('token')
 
-    fetch('http://127.0.0.1:8000/paiements', {
+    fetch(API + '/paiements', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

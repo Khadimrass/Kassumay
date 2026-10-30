@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { API } from './api'
 
 function FormulaireModifierEnfant({ enfant, onEnfantModifie }) {
   const [nom, setNom] = useState(enfant.nom || '')
@@ -23,10 +24,10 @@ function FormulaireModifierEnfant({ enfant, onEnfantModifie }) {
     if (photo) {
       const fd = new FormData()
       fd.append('fichier', photo)
-      const r = await fetch('http://127.0.0.1:8000/upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: fd })
+      const r = await fetch(API + '/upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: fd })
       corps.photo_url = (await r.json()).url
     }
-    const reponse = await fetch('http://127.0.0.1:8000/enfants/' + enfant.id, {
+    const reponse = await fetch(API + '/enfants/' + enfant.id, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
       body: JSON.stringify(corps),

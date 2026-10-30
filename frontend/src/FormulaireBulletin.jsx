@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { API } from './api'
 
 function FormulaireBulletin({ enfantId, onBulletinCree }) {
   const [anneeScolaire, setAnneeScolaire] = useState('')
@@ -13,7 +14,7 @@ function handleSubmit() {
   const formData = new FormData()
   formData.append('fichier', fichier)
   // ... reste inchangé
-  fetch('http://127.0.0.1:8000/upload', {
+  fetch(API + '/upload', {
     method: 'POST',
     headers: { 'Authorization': 'Bearer ' + token },
     body: formData
@@ -22,7 +23,7 @@ function handleSubmit() {
     .then(dataUpload => {
       // à ce stade, dataUpload.url contient le chemin du fichier
 
-      fetch('http://127.0.0.1:8000/bulletins', {
+      fetch(API + '/bulletins', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

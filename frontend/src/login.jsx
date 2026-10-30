@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { API } from './api'
 import { useNavigate } from 'react-router-dom'
 
 function Login() {
@@ -11,7 +12,7 @@ function Login() {
     e.preventDefault()
     setErreur('')
     try {
-      const reponse = await fetch('http://127.0.0.1:8000/login', {
+      const reponse = await fetch(API + '/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, mot_de_passe: motDePasse }),

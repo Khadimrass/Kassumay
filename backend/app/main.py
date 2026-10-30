@@ -5,25 +5,35 @@ from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Request
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 import os
-import uuid
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 
-from app.core.database import get_db
+from app.core.database import get_db, engine, Base
 from app.models.enfant import Enfant
 from app.models.bulletin import Bulletin
 from app.models.paiement import Paiement
 from app.models.utilisateur import Utilisateur
+from app.models.fichier import Fichier
 from app.schemas.enfant_schema import EnfantCreate, EnfantUpdate
 from app.schemas.bulletin_schema import BulletinCreate
 from app.schemas.paiement_schema import PaiementCreate, PaiementUpdate
 from app.schemas.utilisateur_schema import LoginRequest, UtilisateurCreate
 from app.core.securite import hash_mot_de_passe, verifier_mot_de_passe, creer_token, get_current_user
 
+# Crée les tables manquantes au démarrage (ne modifie jamais une table existante)
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
+
+# Adresses du site autorisées à appeler l'API (séparées par des virgules dans ALLOWED_ORIGINS)
+ORIGINES_AUTORISEES = [
+    o.strip()
+    for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
+    if o.strip()
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=ORIGINES_AUTORISEES,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -32,31 +42,46 @@ app.add_middleware(
 
 os.makedirs("uploads", exist_ok=True)
 
-@app.get("/fichiers/{nom_fichier}")
-def lire_fichier(nom_fichier: str,
+@app.get("/fichiers/{ref}")
+def lire_fichier(ref: str, db: Session = Depends(get_db),
                  utilisateur_connecte: Utilisateur = Depends(get_current_user)):
-    nom = os.path.basename(nom_fichier)  # empêche ../ dans le nom
+    if ref.isdigit():
+        fichier = db.query(Fichier).filter(Fichier.id == int(ref)).first()
+        if fichier is None:
+            raise HTTPException(status_code=404, detail="Fichier introuvable")
+        return Response(content=fichier.contenu, media_type=fichier.type_mime,
+                        headers={"Cache-Control": "private, max-age=86400"})
+    # Ancien format : fichier sur le disque (uploads/)
+    nom = os.path.basename(ref)  # empêche ../ dans le nom
     chemin = os.path.join("uploads", nom)
     if not os.path.isfile(chemin):
         raise HTTPException(status_code=404, detail="Fichier introuvable")
     return FileResponse(chemin)
 
-EXTENSIONS_AUTORISEES = {".jpg", ".jpeg", ".png", ".webp", ".pdf"}
+TYPES_AUTORISES = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".webp": "image/webp",
+    ".pdf": "application/pdf",
+}
 TAILLE_MAX = 5 * 1024 * 1024  # 5 Mo
 
 @app.post("/upload")
-def upload_fichier(fichier: UploadFile = File(...),
+def upload_fichier(fichier: UploadFile = File(...), db: Session = Depends(get_db),
                    utilisateur_connecte: Utilisateur = Depends(get_current_user)):
     extension = os.path.splitext(fichier.filename or "")[1].lower()
-    if extension not in EXTENSIONS_AUTORISEES:
+    if extension not in TYPES_AUTORISES:
         raise HTTPException(status_code=400, detail="Type de fichier non autorisé")
     contenu = fichier.file.read(TAILLE_MAX + 1)
     if len(contenu) > TAILLE_MAX:
         raise HTTPException(status_code=413, detail="Fichier trop volumineux (5 Mo max)")
-    chemin = f"uploads/{uuid.uuid4().hex}{extension}"
-    with open(chemin, "wb") as f:
-        f.write(contenu)
-    return {"url": chemin}
+    nouveau = Fichier(nom=os.path.basename(fichier.filename or "fichier"),
+                      type_mime=TYPES_AUTORISES[extension], contenu=contenu)
+    db.add(nouveau)
+    db.commit()
+    db.refresh(nouveau)
+    return {"url": f"fichiers/{nouveau.id}"}
 
 @app.get("/")
 def accueil():
