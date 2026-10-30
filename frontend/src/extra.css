@@ -152,3 +152,35 @@
 .profil-photo img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid #76fc89; }
 .profil-initiale { width: 140px; height: 140px; border-radius: 50%; background: #4a4c70; color: #fff; font-size: 56px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .total-paiements { font-weight: 700; color: #4a4c70; margin: 8px 0 16px; }
+
+/* ---- Correctifs accueil : carousel, flèches, bloc À propos ---- */
+.carousel { background: #20212B; }
+.carousel .carousel-img { min-height: 480px; }
+.carousel .carousel-img img {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%; object-fit: cover;
+}
+.carousel .carousel-text { padding: 0 80px; width: 100%; max-width: 900px; }
+.carousel .carousel-text h1 { font-size: 44px; }
+.carousel .carousel-text p { font-size: 18px; }
+.carousel .carousel-btn { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.carousel .carousel-btn .btn:first-child { margin-right: 0; }
+@media (max-width: 767.98px) {
+  .carousel .carousel-img { min-height: 520px; }
+  .carousel .carousel-text { padding: 0 54px; }
+  .carousel .carousel-text h1 { font-size: 28px; margin-bottom: 14px; }
+  .carousel .carousel-text p { font-size: 15px; margin-bottom: 18px; }
+  .carousel .owl-nav .owl-prev, .carousel .owl-nav .owl-next { width: 40px; height: 40px; font-size: 18px; }
+  .carousel .owl-nav { height: 40px; top: calc(50% - 20px); }
+}
+@keyframes fondu { from { opacity: .15; } to { opacity: 1; } }
+
+.about .about-img { height: 450px; min-height: 0; background-attachment: scroll; }
+@media (max-width: 991.98px) { .about .about-img { height: 280px; } }
+
+/* Le carousel-item Bootstrap est float : la boite parente s'effondrait et le contenu debordait */
+.carousel .carousel-item { float: none; margin-right: 0; }
+.carousel { min-height: 0; overflow: hidden; }
+
+/* Le bouton remonter ne doit plus masquer le pied de page */
+.footer .copyright { padding-bottom: 70px; }

@@ -23,7 +23,7 @@ function AboutSection() {
       <div className="container">
         <div className="row align-items-center">
           <div className="col-lg-6">
-            <div className="about-img" style={{ backgroundImage: 'url(/img/about.jpg)' }}></div>
+            <div className="about-img" style={{ backgroundImage: 'url(/img/about.jpg), url(https://cdn.pixabay.com/photo/2016/12/03/15/13/gambia-1880005_640.jpg)' }}></div>
           </div>
           <div className="col-lg-6">
             <div className="section-header">
