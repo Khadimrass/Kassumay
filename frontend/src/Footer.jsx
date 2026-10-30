@@ -31,11 +31,8 @@ function Footer() {
       </div>
       <div className="container copyright">
         <div className="row">
-          <div className="col-md-6">
+          <div className="col-md-12 text-center">
             <p>&copy; <a href="/">KASSUMAY</a>, tous droits réservés.</p>
-          </div>
-          <div className="col-md-6">
-            <p>Développé par Khadim Dieye · Design : <a href="https://htmlcodex.com">HTML Codex</a></p>
           </div>
         </div>
       </div>
