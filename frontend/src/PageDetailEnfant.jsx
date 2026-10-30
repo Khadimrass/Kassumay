@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import PageHeader from './PageHeader'
 import FormulaireModifierEnfant from './FormulaireModifierEnfant'
 import FormulairePaiement from './FormulairePaiement'
 import FormulaireBulletin from './FormulaireBulletin'
-
-const API = 'http://127.0.0.1:8000'
+import ImageProtegee from './ImageProtegee'
+import { apiFetch, estConnecte } from './api'
 
 function calculerAge(dateNaissance) {
   if (!dateNaissance) return null
@@ -25,15 +25,28 @@ function PageDetailEnfant() {
   const [edition, setEdition] = useState(false)
 
   function charger() {
-    fetch(API + '/enfants').then(r => r.json())
+    if (!estConnecte()) return
+    apiFetch('/enfants').then(r => (r.ok ? r.json() : []))
       .then(liste => setEnfant(liste.find(e => e.id === Number(id)) || null))
-    fetch(API + '/bulletins').then(r => r.json())
+    apiFetch('/bulletins').then(r => (r.ok ? r.json() : []))
       .then(l => setBulletins(l.filter(b => b.enfant_id === Number(id))))
-    fetch(API + '/paiements').then(r => r.json())
+    apiFetch('/paiements').then(r => (r.ok ? r.json() : []))
       .then(l => setPaiements(l.filter(p => p.enfant_id === Number(id))))
   }
 
   useEffect(charger, [id])
+
+  if (!estConnecte()) {
+    return (
+      <div className="page">
+        <PageHeader titre="Enfant" />
+        <div className="contenu text-center" style={{ padding: '60px 15px' }}>
+          <p>Cette page est réservée aux membres de la famille.</p>
+          <Link className="btn btn-custom" to="/login">Se connecter</Link>
+        </div>
+      </div>
+    )
+  }
 
   if (!enfant) return <div className="page"><PageHeader titre="Enfant" /><p className="contenu">Chargement…</p></div>
 
@@ -48,7 +61,8 @@ function PageDetailEnfant() {
           <div className="profil-enfant">
             <div className="profil-photo">
               {enfant.photo_url
-                ? <img src={API + '/' + enfant.photo_url} alt={enfant.nom} />
+                ? <ImageProtegee chemin={enfant.photo_url} alt={enfant.nom}
+                    repli={<div className="profil-initiale">{enfant.nom.charAt(0).toUpperCase()}</div>} />
                 : <div className="profil-initiale">{enfant.nom.charAt(0).toUpperCase()}</div>}
             </div>
             <div>
@@ -70,7 +84,7 @@ function PageDetailEnfant() {
           <ul className="liste-items">
             {bulletins.map(b => (
               <li key={b.id} className="item-carte">
-                {b.fichier_bulletin_url && <img src={API + '/' + b.fichier_bulletin_url} alt="bulletin" width="60" />}
+                {b.fichier_bulletin_url && <ImageProtegee chemin={b.fichier_bulletin_url} alt="bulletin" width="60" />}
                 <span>{b.annee_scolaire} · {b.classe}{b.commentaire ? ' · ' + b.commentaire : ''}</span>
               </li>
             ))}

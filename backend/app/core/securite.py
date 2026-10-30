@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from jose import jwt
@@ -20,7 +22,10 @@ def verifier_mot_de_passe(mot_de_passe: str, mot_de_passe_hash: str) -> bool:
     return pwd_context.verify(mot_de_passe, mot_de_passe_hash)
 
 
-SECRET_KEY = "change-moi-plus-tard-avec-une-vraie-cle-secrete"
+load_dotenv()
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY manquante : ajoute-la dans backend/.env")
 ALGORITHME = "HS256"
 DUREE_TOKEN_MINUTES = 1440
 
@@ -39,6 +44,9 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         user_id = payload.get("sub")
     except JWTError:
         raise HTTPException(status_code=401, detail="Token invalide ou expiré")
+
+    if user_id is None:
+        raise HTTPException(status_code=401, detail="Token invalide")
 
     utilisateur = db.query(Utilisateur).filter(Utilisateur.id == int(user_id)).first()
     if not utilisateur:

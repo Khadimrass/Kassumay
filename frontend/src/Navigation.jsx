@@ -1,9 +1,19 @@
 import { useState, useEffect } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
+import { estConnecte } from './api'
 
 function Navigation() {
   const [ouvert, setOuvert] = useState(false)
   const [sticky, setSticky] = useState(false)
+  const navigate = useNavigate()
+  useLocation() // fait réafficher le menu après connexion / déconnexion
+  const connecte = estConnecte()
+
+  function deconnexion(e) {
+    e.preventDefault()
+    localStorage.removeItem('token')
+    navigate('/login')
+  }
 
   useEffect(() => {
     function verifierScroll() {
@@ -59,7 +69,9 @@ function Navigation() {
               <NavLink to="/" end className={classeLien}>Accueil</NavLink>
               <NavLink to="/enfants" className={classeLien}>Nos enfants</NavLink>
               <NavLink to="/ajouter-enfant" className={classeLien}>Ajouter un enfant</NavLink>
-              <NavLink to="/login" className={classeLien}>Connexion</NavLink>
+              {connecte
+                ? <a href="/login" className="nav-item nav-link" onClick={deconnexion}>Déconnexion</a>
+                : <NavLink to="/login" className={classeLien}>Connexion</NavLink>}
             </div>
           </div>
         </div>

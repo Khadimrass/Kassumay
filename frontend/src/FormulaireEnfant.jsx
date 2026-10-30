@@ -20,8 +20,8 @@ function FormulaireEnfant({ onEnfantCree }) {
     let photoUrl = null
     if (photo) {
       const fd = new FormData()
-      fd.append('file', photo)
-      const r = await fetch('http://127.0.0.1:8000/upload', { method: 'POST', body: fd })
+      fd.append('fichier', photo)
+      const r = await fetch('http://127.0.0.1:8000/upload', { method: 'POST', headers: { Authorization: 'Bearer ' + token }, body: fd })
       photoUrl = (await r.json()).url
     }
     const reponse = await fetch('http://127.0.0.1:8000/enfants', {

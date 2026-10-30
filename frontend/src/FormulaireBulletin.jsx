@@ -15,6 +15,7 @@ function handleSubmit() {
   // ... reste inchangé
   fetch('http://127.0.0.1:8000/upload', {
     method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + token },
     body: formData
   })
     .then(response => response.json())
