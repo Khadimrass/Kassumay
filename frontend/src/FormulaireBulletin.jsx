@@ -47,7 +47,7 @@ function handleSubmit() {
 }
 
   return (
-    <div>
+    <div className="formulaire">
       <input type="text" placeholder="Année scolaire" value={anneeScolaire} onChange={(e) => setAnneeScolaire(e.target.value)} />
       <input type="text" placeholder="classe" value={classe} onChange={(e) => setClasse(e.target.value)} />
       <input type="text" placeholder="commentaire" value={commentaire} onChange={(e) => setCommentaire(e.target.value)} />

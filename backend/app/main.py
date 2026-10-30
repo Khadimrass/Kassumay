@@ -10,7 +10,7 @@ from app.models.enfant import Enfant
 from app.models.bulletin import Bulletin
 from app.models.paiement import Paiement
 from app.models.utilisateur import Utilisateur
-from app.schemas.enfant_schema import EnfantCreate
+from app.schemas.enfant_schema import EnfantCreate, EnfantUpdate
 from app.schemas.bulletin_schema import BulletinCreate
 from app.schemas.paiement_schema import PaiementCreate
 from app.schemas.utilisateur_schema import LoginRequest, UtilisateurCreate
@@ -36,7 +36,7 @@ def upload_fichier(fichier: UploadFile = File(...)):
     with open(chemin, "wb") as buffer:
         shutil.copyfileobj(fichier.file, buffer)
     return {"url": chemin}
-	
+
 @app.get("/")
 def accueil():
     return {"message": "API Kassumay en ligne"}
@@ -102,7 +102,7 @@ def register(data: UtilisateurCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(nouvel_utilisateur)
     return nouvel_utilisateur
-	
+
 @app.delete("/bulletins/{bulletin_id}")
 def supprimer_bulletin(bulletin_id: int, db: Session = Depends(get_db)):
     bulletin = db.query(Bulletin).filter(Bulletin.id == bulletin_id).first()
@@ -110,8 +110,32 @@ def supprimer_bulletin(bulletin_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Bulletin introuvable")
     db.delete(bulletin)
     db.commit()
-	
+
 @app.delete("/bulletins")
 def supprimer_tous_bulletins(db: Session = Depends(get_db)):
     db.query(Bulletin).delete()
     db.commit()
+
+@app.put("/enfants/{enfant_id}")
+def modifier_enfant(enfant_id: int, donnees: EnfantUpdate,
+                    db: Session = Depends(get_db),
+                    utilisateur=Depends(get_current_user)):
+    enfant = db.query(Enfant).filter(Enfant.id == enfant_id).first()
+    if enfant is None:
+        raise HTTPException(status_code=404, detail="Enfant introuvable")
+    for champ, valeur in donnees.model_dump(exclude_unset=True).items():
+        setattr(enfant, champ, valeur)
+    db.commit()
+    db.refresh(enfant)
+    return enfant
+
+
+@app.delete("/enfants/{enfant_id}")
+def supprimer_enfant(enfant_id: int, db: Session = Depends(get_db),
+                     utilisateur=Depends(get_current_user)):
+    enfant = db.query(Enfant).filter(Enfant.id == enfant_id).first()
+    if enfant is None:
+        raise HTTPException(status_code=404, detail="Enfant introuvable")
+    db.delete(enfant)
+    db.commit()
+    return {"message": "supprimé"}

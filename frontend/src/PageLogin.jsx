@@ -1,13 +1,17 @@
- import Login from './Login'
+import PageHeader from './PageHeader'
+import Login from './Login'
 
 function PageLogin() {
   return (
-    <div className="page">
-      <h1>Connexion</h1>
-      <div className="bloc-login">
-        <Login />
+    <>
+      <PageHeader titre="Connexion" />
+      <div className="container page-contenu">
+        <div className="bloc-formulaire bloc-etroit">
+          <h4>Se connecter</h4>
+          <Login />
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

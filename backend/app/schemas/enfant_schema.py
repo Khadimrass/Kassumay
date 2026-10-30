@@ -1,9 +1,20 @@
-from pydantic import BaseModel
 from datetime import date
+from pydantic import BaseModel
+
 
 class EnfantCreate(BaseModel):
     nom: str
-    date_naissance: date
+    type_scolarite: str
+    classe: str | None = None
+    date_naissance: date | None = None
     description: str | None = None
     photo_url: str | None = None
-    type_scolarite: str
+
+
+class EnfantUpdate(BaseModel):
+    nom: str | None = None
+    type_scolarite: str | None = None
+    classe: str | None = None
+    date_naissance: date | None = None
+    description: str | None = None
+    photo_url: str | None = None

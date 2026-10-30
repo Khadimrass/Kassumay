@@ -31,7 +31,7 @@ function FormulairePaiement({ onPaiementCree, enfantId }) {
   }
 
   return (
-    <div>
+    <div className="formulaire">
       <input type="text" placeholder="Année scolaire" value={anneeScolaire} onChange={(e) => setAnneeScolaire(e.target.value)} />
       <input type="text" placeholder="Tranche" value={tranche} onChange={(e) => setTranche(e.target.value)} />
       <input type="number" placeholder="Montant" value={montant} onChange={(e) => setMontant(e.target.value)} />

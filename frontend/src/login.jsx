@@ -18,7 +18,7 @@ function Login() {
   }
 
   return (
-    <div>
+    <div className="formulaire">
       <input
         type="email"
         value={email}
