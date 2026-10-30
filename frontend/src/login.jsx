@@ -16,6 +16,10 @@ function Login() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, mot_de_passe: motDePasse }),
       })
+      if (reponse.status === 429) {
+        setErreur('Trop de tentatives. Réessaie dans 15 minutes.')
+        return
+      }
       if (!reponse.ok) {
         setErreur('Email ou mot de passe incorrect.')
         return

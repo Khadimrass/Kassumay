@@ -1,5 +1,7 @@
+from collections import defaultdict
 from datetime import date
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
+from time import time
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Request
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -137,16 +139,31 @@ def supprimer_paiement(paiement_id: int, db: Session = Depends(get_db),
     db.commit()
     return {"message": "supprimé"}
 
+# --- Limite des tentatives de connexion (en mémoire : repart à zéro si le serveur redémarre) ---
+ECHECS_MAX = 5
+FENETRE_SECONDES = 15 * 60
+echecs_connexion = defaultdict(list)
+
+def verifier_limite(cle: str):
+    maintenant = time()
+    recents = [t for t in echecs_connexion[cle] if maintenant - t < FENETRE_SECONDES]
+    echecs_connexion[cle] = recents
+    if len(recents) >= ECHECS_MAX:
+        raise HTTPException(status_code=429, detail="Trop de tentatives. Réessaie dans 15 minutes.")
+
 @app.post("/login")
-def login(login_data: LoginRequest, db: Session = Depends(get_db)):
+def login(login_data: LoginRequest, request: Request, db: Session = Depends(get_db)):
+    ip = request.client.host if request.client else "inconnue"
+    cle = ip + "|" + login_data.email.strip().lower()
+    verifier_limite(cle)
+
     utilisateur = db.query(Utilisateur).filter(Utilisateur.email == login_data.email).first()
 
-    if not utilisateur:
+    if not utilisateur or not verifier_mot_de_passe(login_data.mot_de_passe, utilisateur.mot_de_passe_hash):
+        echecs_connexion[cle].append(time())
         raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect")
 
-    if not verifier_mot_de_passe(login_data.mot_de_passe, utilisateur.mot_de_passe_hash):
-        raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect")
-
+    echecs_connexion.pop(cle, None)  # connexion réussie : on repart de zéro
     token = creer_token({"sub": str(utilisateur.id)})
     return {"access_token": token, "token_type": "bearer"}
 
