@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import ImageProtegee from './ImageProtegee'
+import usePhotosEnfants from './usePhotosEnfants'
 
 const IMAGE_SECOURS = 'https://cdn.pixabay.com/photo/2016/12/03/15/13/gambia-1880005_640.jpg'
 
-const slides = [
+const textes = [
   {
     image: '/img/carousel-1.jpg',
     titre: "Ensemble pour l'avenir de nos enfants",
@@ -22,35 +24,46 @@ const slides = [
 ]
 
 function Carousel() {
+  const photos = usePhotosEnfants()
   const [index, setIndex] = useState(0)
+
+  // Connecté : une diapo par photo d'enfant. Visiteur : images neutres.
+  const slides = photos.length
+    ? photos.map((photo, i) => ({ ...textes[i % textes.length], photo }))
+    : textes
 
   useEffect(() => {
     const minuteur = setInterval(() => {
-      setIndex(i => (i + 1) % slides.length)
+      setIndex(i => i + 1)
     }, 6000)
     return () => clearInterval(minuteur)
   }, [])
 
+  const position = ((index % slides.length) + slides.length) % slides.length
+  const slide = slides[position]
+
   function precedent() {
-    setIndex((index - 1 + slides.length) % slides.length)
+    setIndex(position - 1)
   }
 
   function suivant() {
-    setIndex((index + 1) % slides.length)
+    setIndex(position + 1)
   }
-
-  const slide = slides[index]
 
   return (
     <div className="carousel">
       <div className="container-fluid">
-        <div className="carousel-item fondu" key={index}>
+        <div className="carousel-item fondu" key={position + '-' + (slide.photo || '')}>
           <div className="carousel-img">
-            <img
-              src={slide.image}
-              alt={slide.titre}
-              onError={(e) => { e.target.onerror = null; e.target.src = IMAGE_SECOURS }}
-            />
+            {slide.photo ? (
+              <ImageProtegee chemin={slide.photo} alt={slide.titre} />
+            ) : (
+              <img
+                src={slide.image}
+                alt={slide.titre}
+                onError={(e) => { e.target.onerror = null; e.target.src = IMAGE_SECOURS }}
+              />
+            )}
           </div>
           <div className="carousel-text">
             <h1>{slide.titre}</h1>

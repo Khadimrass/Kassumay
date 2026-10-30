@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import ImageProtegee from './ImageProtegee'
+import usePhotosEnfants from './usePhotosEnfants'
 
 const onglets = [
   {
@@ -17,13 +19,26 @@ const onglets = [
 
 function AboutSection() {
   const [actif, setActif] = useState(0)
+  const photos = usePhotosEnfants()
+  const [numeroPhoto, setNumeroPhoto] = useState(0)
+
+  useEffect(() => {
+    const minuteur = setInterval(() => setNumeroPhoto(n => n + 1), 4000)
+    return () => clearInterval(minuteur)
+  }, [])
+
+  const photoActive = photos.length ? photos[numeroPhoto % photos.length] : null
 
   return (
     <div className="about">
       <div className="container">
         <div className="row align-items-center">
           <div className="col-lg-6">
-            <div className="about-img" style={{ backgroundImage: 'url(/img/about.jpg), url(https://cdn.pixabay.com/photo/2016/12/03/15/13/gambia-1880005_640.jpg)' }}></div>
+            <div className="about-img" style={{ backgroundImage: 'url(/img/about.jpg), url(https://cdn.pixabay.com/photo/2016/12/03/15/13/gambia-1880005_640.jpg)' }}>
+              {photoActive && (
+                <ImageProtegee key={photoActive} className="about-photo" chemin={photoActive} alt="" />
+              )}
+            </div>
           </div>
           <div className="col-lg-6">
             <div className="section-header">

@@ -184,3 +184,12 @@
 
 /* Le bouton remonter ne doit plus masquer le pied de page */
 .footer .copyright { padding-bottom: 70px; }
+
+/* ---- Photos des enfants (carousel et A propos, utilisateurs connectes) ---- */
+.carousel .carousel-img img { object-position: center 25%; }
+.about .about-img { position: relative; overflow: hidden; }
+.about .about-photo {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 20%;
+  animation: fondu 0.9s ease;
+}
