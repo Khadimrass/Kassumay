@@ -11,3 +11,5 @@ __pycache__/
 Thumbs.db
 backend/uploads/
 photos/
+# Dépendances Node (réinstallées avec npm install)
+node_modules/
