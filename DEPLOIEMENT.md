@@ -16,7 +16,8 @@ Tout est gratuit. Aucun secret n'est écrit dans ce fichier : les valeurs sensib
 
 ## Serveur (Web Service `kassumay-api`)
 
-- Branche : `master` — Root Directory : `backend`
+- Branche : `master`
+- Root Directory : `backend`
 - Build : `pip install -r requirements.txt`
 - Start : `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 - Variables d'environnement :
@@ -27,8 +28,10 @@ Tout est gratuit. Aucun secret n'est écrit dans ce fichier : les valeurs sensib
 
 ## Site (Static Site)
 
-- Branche : `master` — Root Directory : `frontend`
-- Build : `npm install && npm run build` — Publish Directory : `dist`
+- Branche : `master`
+- Root Directory : `frontend`
+- Build : `npm install && npm run build`
+- Publish Directory : `dist`
 - Variables : `VITE_API_URL` (adresse de l'API, sans `/` final) et `NODE_VERSION` = `22`
 - Règle Redirects/Rewrites : `/*` -> `/index.html` (Rewrite)
 

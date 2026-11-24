@@ -78,7 +78,7 @@ function LignePaiement({ paiement, onChange }) {
 
   return (
     <li className={'item-carte ligne-paiement' + (aPayer ? ' item-a-payer' : '')}>
-      <span>{paiement.annee_scolaire} · {paiement.tranche} · {fmt(paiement.montant)} FCFA</span>
+      <span>{paiement.annee_scolaire} - {paiement.tranche} - {fmt(paiement.montant)} FCFA</span>
       <span className="actions-ligne">
         {aPayer && <button onClick={marquerPaye}>Marquer payé</button>}
         <button className="bouton-secondaire" onClick={() => setEdition(true)}>Modifier</button>

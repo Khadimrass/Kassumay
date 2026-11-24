@@ -61,7 +61,7 @@ function ListeEnfants({ limite, sousTitre, titre }) {
                     </div>
                     <div className="team-text">
                       <h2>{enfant.nom}</h2>
-                      <p>{enfant.classe ? enfant.classe + ' · ' : ''}{enfant.type_scolarite === 'privee' ? 'École privée' : 'École publique'}</p>
+                      <p>{enfant.classe ? enfant.classe + ' - ' : ''}{enfant.type_scolarite === 'privee' ? 'École privée' : 'École publique'}</p>
                       <Link className="btn btn-custom" to={'/enfant/' + enfant.id}>Voir détails</Link>
                     </div>
                   </div>

@@ -145,7 +145,7 @@
   object-fit: cover;
 }
 
-/* ---- Import / profil ---- */
+/* Import / profil */
 .formulaire .etiquette { font-size: 13px; font-weight: 600; margin: 4px 0 -4px; }
 .message-erreur { color: #d9534f; font-size: 14px; margin: 0; }
 .profil-enfant { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
@@ -153,7 +153,7 @@
 .profil-initiale { width: 140px; height: 140px; border-radius: 50%; background: #4a4c70; color: #fff; font-size: 56px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .total-paiements { font-weight: 700; color: #4a4c70; margin: 8px 0 16px; }
 
-/* ---- Correctifs accueil : carousel, flèches, bloc À propos ---- */
+/* Correctifs accueil : carousel, flèches, bloc À propos */
 .carousel { background: #20212B; }
 .carousel .carousel-img { min-height: 480px; }
 .carousel .carousel-img img {
@@ -185,7 +185,7 @@
 /* Le bouton remonter ne doit plus masquer le pied de page */
 .footer .copyright { padding-bottom: 70px; }
 
-/* ---- Photos des enfants (carousel et A propos, utilisateurs connectes) ---- */
+/* Photos des enfants (carousel et À propos, utilisateurs connectés) */
 .carousel .carousel-img img { object-position: center 25%; }
 .about .about-img { position: relative; overflow: hidden; }
 .about .about-photo {
@@ -194,7 +194,7 @@
   animation: fondu 0.9s ease;
 }
 
-/* ---- Resume des paiements ---- */
+/* Résumé des paiements */
 .resume-paiements { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
 .resume-case { flex: 1; min-width: 150px; background: #f8f9fa; border-top: 3px solid #76fc89; padding: 12px 16px; }
 .resume-case.reste { border-top-color: #f0ad4e; }
@@ -204,7 +204,7 @@
 .item-a-payer { border-left-color: #f0ad4e; justify-content: space-between; gap: 16px; }
 .item-a-payer button { padding: 4px 12px; font-size: 13px; }
 
-/* ---- Lignes de paiement modifiables ---- */
+/* Lignes de paiement modifiables */
 .ligne-paiement { justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .actions-ligne { display: flex; gap: 8px; flex-wrap: wrap; }
 .ligne-paiement button, .ligne-edition button { padding: 4px 12px; font-size: 13px; }

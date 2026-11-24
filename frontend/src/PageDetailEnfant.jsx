@@ -49,7 +49,7 @@ function PageDetailEnfant() {
     )
   }
 
-  if (!enfant) return <div className="page"><PageHeader titre="Enfant" /><p className="contenu">Chargement…</p></div>
+  if (!enfant) return <div className="page"><PageHeader titre="Enfant" /><p className="contenu">Chargement...</p></div>
 
   const age = calculerAge(enfant.date_naissance)
   const verses = paiements.filter(p => p.statut !== 'a_payer')
@@ -72,7 +72,7 @@ function PageDetailEnfant() {
             </div>
             <div>
               <h2>{enfant.nom}</h2>
-              <p>{enfant.classe || 'Classe non renseignée'} · {enfant.type_scolarite === 'publique' ? 'École publique' : 'École privée'}</p>
+              <p>{enfant.classe || 'Classe non renseignée'} - {enfant.type_scolarite === 'publique' ? 'École publique' : 'École privée'}</p>
               <p>{age !== null ? age + ' ans' : 'Âge non renseigné'}</p>
               <p>{enfant.description || 'Pas encore de description.'}</p>
               <button onClick={() => setEdition(!edition)}>{edition ? 'Annuler' : 'Modifier le profil'}</button>
@@ -90,7 +90,7 @@ function PageDetailEnfant() {
             {bulletins.map(b => (
               <li key={b.id} className="item-carte">
                 {b.fichier_bulletin_url && <ImageProtegee chemin={b.fichier_bulletin_url} alt="bulletin" width="60" />}
-                <span>{b.annee_scolaire} · {b.classe}{b.commentaire ? ' · ' + b.commentaire : ''}</span>
+                <span>{b.annee_scolaire} - {b.classe}{b.commentaire ? ' - ' + b.commentaire : ''}</span>
               </li>
             ))}
           </ul>
